@@ -2,12 +2,14 @@ from flask import Flask, render_template, request, jsonify, session
 import openai, os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Enum
-  
+from dotenv import load_dotenv
+
+load_dotenv()
   
 app = Flask(__name__, template_folder='template', static_folder='static') 
 app.debug = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = ''
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('database')
 app.config['UPLOAD_FOLDER'] = 'static/img'
 db = SQLAlchemy(app)
 
@@ -25,7 +27,7 @@ with app.app_context():
     db.create_all()  
 
 # OpenAI API Key 
-openai.api_key = ''
+openai.api_key = os.getenv('api-key')
 app.secret_key = '@123'
 
 def get_completion(prompt):
