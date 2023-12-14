@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, jsonify, session
-import openai, os
+import openai, os, base64, secrets
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Enum
 from dotenv import load_dotenv
+
 
 load_dotenv()
   
@@ -28,7 +29,12 @@ with app.app_context():
 
 # OpenAI API Key 
 openai.api_key = os.getenv('api-key')
-app.secret_key = '@123'
+app.secret_key = secrets.token_hex(16)
+
+# Function to encode the image
+def encode_image(image_path):
+  with open(image_path, "rb") as image_file:
+    return base64.b64encode(image_file.read()).decode('utf-8')
 
 def get_completion(prompt):
     messages = session.get('messages', [])
@@ -122,11 +128,12 @@ def intro_route():
 
 @app.route("/classify", methods=['POST'])
 def classify_route():
-    classification = session.get('classification')
+    # classification = session.get('classification')
+    messages = session.get('messages', [])
     image = session.get('image')
     if 'gambar' in request.files:
         file = request.files['gambar']
-        path = request.form.get('clicked', None)
+        # path = request.form.get('clicked', None)
         if file.filename != '':
             # Save the file to the specified upload folder
             print(file)
@@ -136,17 +143,46 @@ def classify_route():
             # Check if the directory exists
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.makedirs(app.config['UPLOAD_FOLDER'])            
-            print(file_path)
+
             file.save(file_path)
+
+            base64_image = encode_image(file_path)
 
             # classification = model.classify(path, file_path)
             image = file.filename
+            
+            tmp_messages = list(messages)
+            tmp_messages.append(
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                        "type": "text",
+                        "text": "Klasifikasikan apa yang terjadi pada gigi tersebut berdasarkan gambar, dan messege sebelumnya"
+                        },
+                        {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                        }
+                    ]
+                })
 
-            # Perform classification or any other processing here
-            session['classification'] = classification
+            response = openai.chat.completions.create(
+                model="gpt-4-vision-preview",
+                messages=[
+                    tmp_messages
+                ],
+                max_tokens=300,
+            )
+            messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            print(messages)
+
+        
             session['image'] = image
 
-            return jsonify({'classification': classification, 'classifiedImageUrl': file_path})
+            return jsonify({'classification': "tes", 'classifiedImageUrl': file_path})
 
     return 'No file uploaded or invalid file.'
 

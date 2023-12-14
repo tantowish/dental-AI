@@ -81,6 +81,7 @@ $(document).ready(function(event) {
 
 
     function uploadTemplateShow() {
+        console.log(clicked)
         isUpload = true;
         tm.addClass('hidden');
         const uploadTemplateContent = $("#upload").html();
@@ -90,6 +91,13 @@ $(document).ready(function(event) {
         $('#gambar').on('change', function () {
             previewImage(this);
         });
+
+        $('#kembali-pilih').click(function(event){
+            console.log('Masuk')
+            tm.removeClass('hidden')
+            $('#upload-container').remove()
+            isUpload=false
+        })
 
         classifyClick();
     }
@@ -137,6 +145,7 @@ $(document).ready(function(event) {
             });
         }
     });
+
 
     $('#appointment').click(function(event){
         // toggleChatbox(event)
@@ -263,14 +272,20 @@ $(document).ready(function(event) {
                         // Handle the success response
                         console.log('File uploaded and classified:', response.classification);
 
-                        console.log(response.classifiedImageUrl)
-                        $('#text').text(response.classification);
+                        // console.log(response.classifiedImageUrl)
+                        // $('#text').text(response.classification);
+
+                        $('#text').text('Berhasil Upload')
+                        $('#loading').remove()
 
                         // Display the classified image
                         $('#classified-image').attr('src', response.classifiedImageUrl);
                         $('#classified-image-container').removeClass('hidden');
+                        $('#text-appointment').removeClass('hidden');
                     },
                     error: function (error) {
+                        $('#text').text('Gagal Upload')
+                        $('#loading').remove()
                         // Handle the error response
                         console.error('Error uploading file:', error);
                     },
@@ -278,6 +293,11 @@ $(document).ready(function(event) {
             } else {
                 alert('Please select a file before submitting.');
             }
+            $('#kembali-upload').click(function(event){
+                $('#container-upload').removeClass('hidden');
+                $('#waiting').addClass('hidden')
+                console.log('Masuk')
+            })
         });
     }
 
