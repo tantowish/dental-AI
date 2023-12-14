@@ -131,9 +131,11 @@ def classify_route():
     # classification = session.get('classification')
     messages = session.get('messages', [])
     image = session.get('image')
+    classification = session.get('classification')
     if 'gambar' in request.files:
         file = request.files['gambar']
-        # path = request.form.get('clicked', None)
+        path = request.form.get('clicked', None)
+        print(path)
         if file.filename != '':
             # Save the file to the specified upload folder
             print(file)
@@ -157,14 +159,14 @@ def classify_route():
                     "role": "user",
                     "content": [
                         {
-                        "type": "text",
-                        "text": "Klasifikasikan apa yang terjadi pada gigi tersebut berdasarkan gambar, dan messege sebelumnya"
+                            "type": "text",
+                            "text": "Apa yang terjadi pada "+path+" tersebut, tolong simpulkan dengan baik!"
                         },
                         {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{base64_image}"
-                        }
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            }
                         }
                     ]
                 })
@@ -176,13 +178,14 @@ def classify_route():
                 ],
                 max_tokens=300,
             )
-            messages.append({"role": "assistant", "content": response.choices[0].message.content})
+            classification = response.choices[0].message.content
+            messages.append({"role": "assistant", "content": classification})
             print(messages)
 
-        
+            session['classification'] = classification
             session['image'] = image
 
-            return jsonify({'classification': "tes", 'classifiedImageUrl': file_path})
+            return jsonify({'classifiedImageUrl': file_path})
 
     return 'No file uploaded or invalid file.'
 

@@ -74,7 +74,7 @@ $(document).ready(function(event) {
 
     const jllButton = $('#jll')
     jllButton.click(function (event) {
-        clicked = "jll"
+        clicked = "jaringan lunak"
         event.preventDefault();
         uploadTemplateShow()
     });
