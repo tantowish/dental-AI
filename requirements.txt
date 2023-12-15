@@ -7,3 +7,4 @@ tensorflow==2.15.0
 Pillow==9.5.0
 numpy==1.23.5
 cryptography==41.0.7
+DateTime==5.4

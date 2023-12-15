@@ -161,6 +161,7 @@ $(document).ready(function(event) {
                 dataType: 'json',
                 success: function(data) {
                     console.log(data);
+                    window.location.href = '/result';
                 },
                 error: function(error) {
                     console.error('Error summarizing:', error);

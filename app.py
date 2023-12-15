@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, flash, url_for
 import openai, os, base64, secrets
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Enum
 from dotenv import load_dotenv
+from datetime import datetime
+
 
 
 load_dotenv()
@@ -20,8 +22,10 @@ class chatbot_history(db.Model):
     umur = db.Column(db.Integer, nullable=False)
     jenis_kelamin = db.Column(Enum('P', 'L', name='jenis_kelamin_enum'), nullable=False)
     rangkuman = db.Column(db.Text, nullable=True)
-    classification = db.Column(db.String(100), nullable=True)
+    classification = db.Column(db.Text, nullable=True)
     image = db.Column(db.String(100), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    edited_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 # Buat database dan tabel
 with app.app_context():
@@ -60,6 +64,7 @@ def index():
         return jsonify({'response': response})
 
     elif request.method == 'GET':
+        session.clear()
         introduction = "Halo, saya adalah AI yang memiliki pengetahuan tentang gigi dan mulut, silahkan tanya apapun terkait permasalahan anda"
         session['messages'] = [
             {"role": "system", "content": "Kamu adalah kecerdasan buatan yang berperan dan Memiliki pengetahuan sebagai seorang dokter gigi yang berpengalaman dan berwawasan luas, berbahasa Indonesia namun juga mampu menggunakan bahasa lainnya, baik hati dan ramah\nSebagai kecerdasan buatan yang berperan sebagai dokter gigi, kamu harus mampu :\n1. Menjawab pertanyaan berkaitan dengan kesehatan gigi dan mulut\n2. Menerima keluhan penyakit gigi dan mulut, kemudian menegakkan diagnosa melalui anamnesa yang memuat setidaknya 5-10 pertanyaan yang ditanyakan secara bertahap satu per satu setelah user menjawab yang bertujuan untuk menguatkan kesimpulan diagnosa yang akan kamu berikan. Diagnosa yang kamu berikan haruslah berdasar pada file PPK Gigi yang diupload dalam instructions ini\n3. Pada akhir sesi chat dengan user kamu harus melakukan resume dari penyakit gigi dan mulut yang diderita user dengan format :\nA. Nama Penyakit\nB. No ICD 10\nC. Definisi\nD. Klasifikasi Terapi ICD 9 CM\n4. Merekomendasikan untuk mendaftarkan antrian di dokter gigi sesegera mungkin"}
@@ -110,7 +115,21 @@ def summarize_route():
     db.session.add(new_user)
     db.session.commit()
 
+    # Save the history list in the session
+    history["created_at"] = new_user.created_at
+    session['history'] = history
+
+    # Redirect to result page with a success message
+    flash('Data saved successfully!', 'success')
     return jsonify({'message': 'Summary Saved!'})
+
+
+@app.route("/result")
+def result_page():
+    # Retrieve the history list from the session
+    history = session.get('history', {})
+
+    return render_template('result.html', history=history)
     
 @app.route("/intro", methods=['POST'])
 def intro_route():
