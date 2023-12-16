@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carigi AI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <link href="{{ url_for('static', filename='/asset/dist/output.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/asset/dist/hover.css') }}">
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script> 
+    <script src="{{ url_for('static', filename='/asset/javascript/index.js') }}"></script>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="flex flex-wrap h-screen items-center">
+        <div class="md:w-1/2 w-full mx-auto p-8 lg:px-32 lg:py-16">
+            <div id="error" class="hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <span class="font-medium">Error!</span> Masukkan input
+            </div>
+            <form id="userForm">
+                <div class="mb-6">
+                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
+                    <input type="text" id="name" name="name" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                </div>
+                <div class="mb-6">
+                    <label for="umur" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Umur</label>
+                    <input type="number" id="umur" name="umur" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                </div>
+                <div class="mb-10">
+                    <label for="kelamin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Kelamin</label>
+                    <select id="kelamin" name="kelamin" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                        <option value="pilih">pilih</option>
+                        <option value="L">laki-laki</option>
+                        <option value="P">perempuan</option>
+                    </select>
+                </div>
+                <div class="flex flex-wrap items-center justify-center">
+                    <div class="mb-4 mr-4 flex flex-col items-center gap-2">
+                        <button type="button" id="open-chat" class="bg-main text-white py-2 px-4 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">
+                            Konsultasi Kecerdasan Buatan
+                        </button>
+                        <p class="text-center">atau</p>
+                        <button type="submit" id="appointment" class="bg-main text-white py-2 px-4 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">lanjutkan appointment</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="w-full md:w-1/2 md:h-screen bg-main flex flex-wrap items-center">
+            <div id="ic3D" class="p-8 max-w-lg mx-auto transition hover:translate-x-2 hover:scale-105 duration-500 ease-in-out">
+                <img src="{{ url_for('static', filename='/asset/img/3d_teeth.png') }}" alt="">
+            </div>
+            <div id="chat-container" class="hidden px-4 md:px-0 w-96 mx-auto transition ease-in-out duration-500 group">
+                <div id="chat-bg" class="bg-white shadow-2xl rounded-lg max-w-lg w-full">
+                    <div class="p-4 border-b bg-main text-white rounded-t-lg flex justify-between items-center">
+                        <p class="text-lg font-semibold" id="header">Carigi Bot</p>
+                        <div class="flex flex-wrap items-center">
+                            <button id="tm-menu" class="mr-5">
+                                <svg id="icTM" class="" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <svg id="icChat" class="hidden" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="chat" class="">
+                        <div id="prompt" class="p-4 h-80 overflow-y-auto">
+                            <div class="mb-2">
+                                <p class="bg-gray-200 text-gray-700 text-sm rounded-lg py-2 px-4 inline-block">{{ introduction }}.</p>
+                            </div>
+                            <!-- <div class="mb-2 text-right">
+                                <p class="bg-main text-sm text-white rounded-lg py-2 px-4 inline-block">Halo</p>
+                            </div> -->
+                        </div>
+                        <form action="" method="post" class="p-4 border-t flex flex-nowrap mx-auto">
+                            <input id="user-input" type="text" placeholder="Type a message" class="w-3/4 px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-main group-focus:scale-105" name="prompt" autocomplete="off">
+                            <button id="send-button" type="submit" class="w-1/5 bg-main text-white py-2 rounded-r-md hover:bg-teal-400 transition duration-300">Send</button>
+                        </form>  
+                    </div>    
+                    <div id="tm" class="hidden">
+                        <div class="p-4 h-[395px] overflow-y-auto text-center">
+                            <h1 class="mb-8 mt-4">Pilih sesuai foto atau gambar</h1>
+                            <button id="gigi" class="p-2 bg-main text-white font-semibold w-2/3 rounded-lg mb-8">
+                                Gigi
+                            </button>
+                            <button id="gusi" class="p-2 bg-main text-white font-semibold w-2/3 rounded-lg mb-8">
+                                Gusi
+                            </button>
+                            <button id="jll" class="p-2 bg-main text-white font-semibold w-2/3 rounded-lg mb-8">
+                                Jaringan Lunak Lainnya
+                            </button>
+                        </div>
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <template id="upload">
+        <div id="upload-container" class="p-4 h-[395px] overflow-y-auto text-center">
+            <div id="container-upload">
+                <button id="kembali-pilih" class="flex flex-wrap self-start" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M8.293 12.707a1 1 0 0 1 0-1.414l5.657-5.657a1 1 0 1 1 1.414 1.414L10.414 12l4.95 4.95a1 1 0 0 1-1.414 1.414z"/></g></svg>
+                    Kembali
+                </button>
+                <h1 class="mb-8 mt-4 font-semibold">Upload Gambar</h1>
+                <div class="mb-8">
+                    <label class="cursor-pointer px-16 py-4 text-black border border-main border-dashed" htmlFor="gambar">
+                        <input class="hidden" type="file" name="gambar" id="gambar" accept="image/*" onchange="previewImage(this)">
+                        Pick photo
+                    </label>
+                    <div class="flex flex-col items-center justify-center h-36">
+                        <div id="image-preview" class="mt-8 hidden">
+                            <img id="preview" src="" alt="Image Preview" class="max-w-36 mx-auto max-h-32 rounded-lg">
+                        </div>
+                    </div>
+                </div>
+                <button class="p-2 bg-main text-white font-semibold w-2/3 rounded-lg mb-5" id="button-classify">Submit</button>
+            </div>
+            <div id="waiting" class="hidden h-full">
+                <button id="kembali-upload" class="flex flex-wrap self-start" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M8.293 12.707a1 1 0 0 1 0-1.414l5.657-5.657a1 1 0 1 1 1.414 1.414L10.414 12l4.95 4.95a1 1 0 0 1-1.414 1.414z"/></g></svg>
+                    Kembali
+                </button>
+                <div class="flex flex-wrap items-center px-4 justify-center mt-10">
+                    <div class="flex flex-col items-center">
+                        <div id="classified-image-container" class="w-full hidden mb-2">
+                            <img id="classified-image" src="" alt="Classified Image" class="max-w-36 mx-auto max-h-32 rounded-lg">
+                        </div>
+                        <svg class="mt-20 mb-4" id="loading" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg>
+                        <p id="text" class="text-lg font-semibold w-full">Menunggu Upload</p>
+                        <p id="text-appointment" class="text-base mt-2 text-center hidden mx-8">Lanjut Appointment untuk mendapatkan hasil</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+</body>
+</html>
