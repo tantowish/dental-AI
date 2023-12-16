@@ -277,7 +277,7 @@ $(document).ready(function(event) {
                         // $('#text').text(response.classification);
 
                         $('#text').text('Berhasil Upload')
-                        $('#loading').remove()
+                        $('#loading').addClass('hidden')
 
                         // Display the classified image
                         $('#classified-image').attr('src', response.classifiedImageUrl);
@@ -295,6 +295,11 @@ $(document).ready(function(event) {
                 alert('Please select a file before submitting.');
             }
             $('#kembali-upload').click(function(event){
+                event.preventDefault
+                $('#text').text('Menunggu Upload')
+                $('#loading').removeClass('hidden')
+                $('#text-appointment').addClass('hidden');
+                $('#classified-image-container').addClass('hidden');
                 $('#container-upload').removeClass('hidden');
                 $('#waiting').addClass('hidden')
                 console.log('Masuk')
