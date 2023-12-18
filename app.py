@@ -1,13 +1,25 @@
-from flask import Flask, render_template, request, jsonify, session, flash, url_for
-import openai, os, base64, secrets
+from flask import Flask, render_template, request, jsonify, session, flash
+import openai, os, base64, secrets, boto3, uuid
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Enum
 from dotenv import load_dotenv
 from datetime import datetime
 
-
-
 load_dotenv()
+
+# print(os.getenv('AWS_ACCESS_KEY_ID'))
+# print(os.getenv('AWS_ACCESS_KEY_SECRET'))
+s3 = boto3.client('s3',
+                  aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+                  aws_secret_access_key=os.getenv('AWS_ACCESS_KEY_SECRET'),
+                  region_name = os.getenv('AWS_ACCESS_REGION'),
+                  endpoint_url = os.getenv('URL_IMG'),
+                  )
+
+ALLOWED_EXTENSTIONS = {'png','jpg','jpeg'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSTIONS
   
 app = Flask(__name__, template_folder='template', static_folder='static') 
 app.debug = True
@@ -96,8 +108,6 @@ def summarize_route():
 
     session['summary'] = response
 
-
-
     nama = request.form['nama']
     umur = request.form['umur']
     jenis_kelamin = request.form['jenis_kelamin']
@@ -155,36 +165,48 @@ def classify_route():
         file = request.files['gambar']
         path = request.form.get('clicked', None)
         print(path)
-        if file.filename != '':
-            # Save the file to the specified upload folder
+        if file.filename != '' and allowed_file(file.filename):
+            new_filename = uuid.uuid4().hex + '.'+file.filename.rsplit('.', 1)[1].lower()
+
+            s3.upload_fileobj(
+                file,
+                os.getenv("AWS_BUCKET_NAME"),
+                new_filename,
+                ExtraArgs={
+                    "ACL": "public-read"
+                }
+            )
+            image = new_filename
+
             print(file)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file_path = "https://nos.jkt-1.neo.id/digman-ai/"+image
             print("File path:", file_path)
 
-            # Check if the directory exists
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])            
+            # # Check if the directory exists
+            # if not os.path.exists(app.config['UPLOAD_FOLDER']):
+            #     os.makedirs(app.config['UPLOAD_FOLDER'])            
 
-            file.save(file_path)
+            # file.save(file_path)
 
-            base64_image = encode_image(file_path)
+            # base64_image = encode_image(file_path)
 
             # classification = model.classify(path, file_path)
-            image = file.filename
             
             tmp_messages = list(messages)
+            print(path)
             tmp_messages.append(
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": "Apa yang terjadi pada "+path+" tersebut, tolong simpulkan dengan baik!"
+                            # "text": "Apa yang terjadi pada "+path+" tersebut, tolong simpulkan dengan baik!"
+                            "text":"Gambar diatas adalah foto dari"+ path + "seorang pasien Deskripsikan kondisi gigi pasien tersebut, sebutkan kode ICD 10 Diagnosis dari kondisi gigi tersebut Sebutkan juga kemungkinan penyebab, tata cara penatalaksanaan pertolongan pertama di rumah, dan kemungkinan-kemungkinan kode tindakan ICD 9 CM yang dapat dilakukan dokter gigi Sertakan pula langkah-langkah promotif dan preventif agar kondisi pasien lebih baik kedepannya"
                         },
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}"
+                                "url": file_path
                             }
                         }
                     ]
@@ -205,6 +227,9 @@ def classify_route():
             session['image'] = image
 
             return jsonify({'classifiedImageUrl': file_path})
+        
+        else:
+            return jsonify({'error': "jenis file tidak didukung"})
 
     return 'No file uploaded or invalid file.'
 

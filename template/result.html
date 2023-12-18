@@ -11,7 +11,6 @@
     <div class="max-w-6xl mx-auto p-8 lg:px-32 lg:py-24">
         <h1 class="mb-10 text-center text-2xl font-bold">User History</h1>
         <p class="text-center text-slate-400 text-sm">{{ history['created_add'] }}</p>
-        
         <div>
             <h1 class="text-lg font-semibold">Data Pasien :</h1>
             <p>Nama: {{ history['nama'] }}</p>
@@ -20,7 +19,6 @@
         </div>
         <div class="mt-5">
             <h1 class="font-semibold">Summary :</h1>
-            <!-- Using the safe filter to preserve line breaks -->
             <p>{{ history['rangkuman']|replace('\n', '<br>')|safe }}</p>
         </div>
         <div class="mt-4">
@@ -34,14 +32,11 @@
         <div class="mt-4">
             <h1 class="font-semibold">Gambar :</h1>
             {% if history['image'] %}
-                <!-- Assuming 'image' is a path to the image file -->
-                <img class="max-w-72 max-h-72" src="{{ url_for('static', filename='img/'+history['image']) }}" alt="">
+                <img class="max-w-72 max-h-72" src="{{ 'https://nos.jkt-1.neo.id/digman-ai/'+history['image'] }}" alt="">
             {% else %}
                 <p>No image available</p>
             {% endif %}
         </div>
-    
-        <!-- You can access other properties similarly -->
     </div>
 </body>
 </html>

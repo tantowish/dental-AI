@@ -74,7 +74,7 @@ $(document).ready(function(event) {
 
     const jllButton = $('#jll')
     jllButton.click(function (event) {
-        clicked = "jaringan lunak"
+        clicked = "jaringan lunak pada mulut"
         event.preventDefault();
         uploadTemplateShow()
     });
@@ -104,7 +104,9 @@ $(document).ready(function(event) {
 
     function previewImage(input) {
         const preview = $('#preview');
-        const imagePreviewContainer = $('#image-preview');
+        const imagePreviewContainer = $('#image-preview');        
+        $('#button-classify').removeClass('hidden')
+
 
         // Check if a file is selected
         if (input.files && input.files[0]) {
@@ -270,23 +272,31 @@ $(document).ready(function(event) {
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        // Handle the success response
-                        console.log('File uploaded and classified:', response.classification);
-
-                        // console.log(response.classifiedImageUrl)
-                        // $('#text').text(response.classification);
-
-                        $('#text').text('Berhasil Upload')
-                        $('#loading').addClass('hidden')
-
-                        // Display the classified image
-                        $('#classified-image').attr('src', response.classifiedImageUrl);
-                        $('#classified-image-container').removeClass('hidden');
-                        $('#text-appointment').removeClass('hidden');
+                        if(response.classifiedImageUrl){
+                            // Handle the success response
+                            console.log('File uploaded and classified:');
+    
+                            // console.log(response.classifiedImageUrl)
+                            // $('#text').text(response.classification);
+    
+                            $('#text').text('Berhasil Upload')
+                            $('#loading').addClass('hidden')
+    
+                            // Display the classified image
+                            $('#classified-image').attr('src', response.classifiedImageUrl);
+                            $('#classified-image-container').removeClass('hidden');
+                            $('#text-appointment').removeClass('hidden');
+                        }
+                        else{
+                            $('#text').text(response.error)
+                            $('#loading').addClass('hidden')
+                            $('#error-file').removeClass('hidden')
+                        }
                     },
                     error: function (error) {
                         $('#text').text('Gagal Upload')
                         $('#loading').remove()
+                        $('#error-file').removeClass('hidden')
                         // Handle the error response
                         console.error('Error uploading file:', error);
                     },
@@ -297,7 +307,12 @@ $(document).ready(function(event) {
             $('#kembali-upload').click(function(event){
                 event.preventDefault
                 $('#text').text('Menunggu Upload')
-                $('#loading').removeClass('hidden')
+                if($('#loading')){
+                    $('#loading').removeClass('hidden')
+                }
+                if($('#error-file')){
+                    $('#error-file').addClass('hidden')
+                }
                 $('#text-appointment').addClass('hidden');
                 $('#classified-image-container').addClass('hidden');
                 $('#container-upload').removeClass('hidden');
