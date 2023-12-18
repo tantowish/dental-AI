@@ -6,3 +6,4 @@ mysqlclient==2.2.0
 numpy==1.23.5
 cryptography==41.0.7
 DateTime==5.4
+gunicorn
