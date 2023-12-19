@@ -151,7 +151,11 @@ $(document).ready(function(event) {
 
     $('#appointment').click(function(event){
         // toggleChatbox(event)
-        if(responseCount>5){
+        event.preventDefault
+        
+        if(responseCount>3){
+            $('body').append($('#loading-overlay').html());
+
             $.ajax({
                 url: '/summarize',
                 type: 'POST',
@@ -162,8 +166,23 @@ $(document).ready(function(event) {
                 },
                 dataType: 'json',
                 success: function(data) {
-                    console.log(data);
-                    window.location.href = '/result';
+                    $('#loading-spinner').addClass('hidden')
+                    $('#done-button').removeClass('hidden')
+
+                    $('#result-user').on('click', function() {
+                        window.open('/result', '_blank');
+                    });
+
+                    const history = data.history
+
+                    $('#daftar').on('click', function() {
+                        var newDomainURL = 'https://' + data.link + '/register?rekmed=' + encodeURIComponent(data.rekmed) +
+                        '&rangkuman=' + encodeURIComponent(history.rangkuman) +
+                        '&rangkumanGambar=' + encodeURIComponent(history.classification) +
+                        '&image=' + history.image;
+                
+                        window.location.href = newDomainURL;
+                    });
                 },
                 error: function(error) {
                     console.error('Error summarizing:', error);

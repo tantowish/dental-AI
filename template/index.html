@@ -21,19 +21,20 @@
             <form id="userForm">
                 <div class="mb-6">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
-                    <input type="text" id="name" name="name" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                    <input type="text" id="name" name="name" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.nama is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled  {% endif %} value="{{ data_pasien.nama }}" required>
                 </div>
                 <div class="mb-6">
                     <label for="umur" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Umur</label>
-                    <input type="number" id="umur" name="umur" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5" required>
+                    <input type="number" id="umur" name="umur" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.umur is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled {% endif %} value="{{ data_pasien.umur }}" required>
                 </div>
                 <div class="mb-10">
                     <label for="kelamin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Kelamin</label>
-                    <select id="kelamin" name="kelamin" class="bg-gray-50 border border-main text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                        <option value="pilih">pilih</option>
-                        <option value="L">laki-laki</option>
-                        <option value="P">perempuan</option>
+                    <select id="kelamin" name="kelamin" class="bg-gray-50 border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main  {% if data_pasien.kelamin is not none %} bg-gray-100" disabled {% endif %}>
+                        <option value="pilih" {% if data_pasien.kelamin is none or data_pasien.kelamin == 'pilih' %} selected {% endif %}>pilih</option>
+                        <option value="L" {% if data_pasien.kelamin == 'L' %} selected {% endif %}>laki-laki</option>
+                        <option value="P" {% if data_pasien.kelamin == 'P' %} selected {% endif %}>perempuan</option>
                     </select>
+                    
                 </div>
                 <div class="flex flex-wrap items-center justify-center">
                     <div class="mb-4 mr-4 flex flex-col items-center gap-2">
@@ -65,6 +66,9 @@
                         <div id="prompt" class="p-4 h-80 overflow-y-auto">
                             <div class="mb-2">
                                 <p class="bg-gray-200 text-gray-700 text-sm rounded-lg py-2 px-4 inline-block">{{ introduction }}.</p>
+                            </div>
+                            <div class="text-right hidden">
+                                <p class="bg-main text-sm text-white rounded-lg py-2 px-4 inline-block">tes</p>
                             </div>
                         </div>
                         <form action="" method="post" class="p-4 border-t flex flex-nowrap mx-auto">
@@ -131,6 +135,28 @@
             </div>
         </div>
     </template>
-    
+
+    <template id="loading-overlay">
+        <div class="fixed z-10 top-0 left-0 w-full h-full flex items-center justify-center bg-gray-900 bg-opacity-60">
+            <div id="loading-spinner">
+                <!-- SVG loading spinner goes here -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+                    <path class="text-teal-100" stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z">
+                        <animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/>
+                    </path>
+                    <path class="text-main" stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12">
+                        <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/>
+                    </path></g>
+                </svg>
+                <h1 class="text-center text-2xl text-white">Sedang Menganalisa...</h1>
+            </div>
+            <div id="done-button" class="hidden">
+                <div  class="flex flex-wrap gap-8">
+                    <button type="button" id="result-user" class="text-lg bg-main text-white py-2.5 px-8 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Lihat Hasil</button>
+                    <button type="button" id="daftar" class="text-lg bg-main text-white py-2.5 px-8 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Daftar</button>
+                </div>
+            </div>
+        </div>
+    </template>
 </body>
 </html>

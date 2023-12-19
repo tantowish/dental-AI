@@ -72,7 +72,6 @@ def index():
     if request.method == 'POST':
         prompt = request.form['prompt']
         response = get_completion(prompt)
-        print(session['messages'])
         return jsonify({'response': response})
 
     elif request.method == 'GET':
@@ -81,8 +80,32 @@ def index():
         session['messages'] = [
             {"role": "system", "content": "Kamu adalah kecerdasan buatan yang berperan dan Memiliki pengetahuan sebagai seorang dokter gigi yang berpengalaman dan berwawasan luas, berbahasa Indonesia namun juga mampu menggunakan bahasa lainnya, baik hati dan ramah\nSebagai kecerdasan buatan yang berperan sebagai dokter gigi, kamu harus mampu :\n1. Menjawab pertanyaan berkaitan dengan kesehatan gigi dan mulut\n2. Menerima keluhan penyakit gigi dan mulut, kemudian menegakkan diagnosa melalui anamnesa yang memuat setidaknya 5-10 pertanyaan yang ditanyakan secara bertahap satu per satu setelah user menjawab yang bertujuan untuk menguatkan kesimpulan diagnosa yang akan kamu berikan. Diagnosa yang kamu berikan haruslah berdasar pada file PPK Gigi yang diupload dalam instructions ini\n3. Pada akhir sesi chat dengan user kamu harus melakukan resume dari penyakit gigi dan mulut yang diderita user dengan format :\nA. Nama Penyakit\nB. No ICD 10\nC. Definisi\nD. Klasifikasi Terapi ICD 9 CM\n4. Merekomendasikan untuk mendaftarkan antrian di dokter gigi sesegera mungkin"}
         ]
+        session['link']=request.args.get('link')
+        session['rekmed'] = request.args.get('rekmed')
+        nama = request.args.get('nama')
+        umur = request.args.get('umur')
+        kelamin = request.args.get('kelamin')
+        # penjadwalan = request.args.get('penjadwalan')
+        # tanggal = request.args.get('tanggal')
+        # poliklinik = request.args.get('poliklinik')
+        # bayar = request.args.get('bayar')
+        # klinik = request.args.get('klinik')
+        all_values = {
+            'rekmed': session['rekmed'],
+            'nama': nama,
+            'umur':umur,
+            'kelamin':kelamin
+            # 'penjadwalan': penjadwalan,
+            # 'tanggal': tanggal,
+            # 'poliklinik': poliklinik,
+            # 'bayar': bayar,
+            # 'klinik': klinik,
+        }
 
-        return render_template('index.html', introduction=introduction)
+        print(all_values)
+
+
+        return render_template('index.html', introduction=introduction, data_pasien=all_values)
 
     return render_template('index.html')
 
@@ -121,17 +144,19 @@ def summarize_route():
         "image":image
     }
 
-    new_user = chatbot_history(**history)
-    db.session.add(new_user)
-    db.session.commit()
+    # new_user = chatbot_history(**history)
+    # db.session.add(new_user)
+    # db.session.commit()
 
     # Save the history list in the session
-    history["created_at"] = new_user.created_at
+    # history["created_at"] = new_user.created_at
     session['history'] = history
 
+    link = session['link']
+    rekmed = session['rekmed']
     # Redirect to result page with a success message
     flash('Data saved successfully!', 'success')
-    return jsonify({'message': 'Summary Saved!'})
+    return jsonify({'message': 'Summary Saved!','history':history,'link':link,'rekmed':rekmed})
 
 
 @app.route("/result")
@@ -157,7 +182,6 @@ def intro_route():
 
 @app.route("/classify", methods=['POST'])
 def classify_route():
-    # classification = session.get('classification')
     messages = session.get('messages', [])
     image = session.get('image')
     classification = session.get('classification')
@@ -181,16 +205,6 @@ def classify_route():
             print(file)
             file_path = "https://nos.jkt-1.neo.id/digman-ai/"+image
             print("File path:", file_path)
-
-            # # Check if the directory exists
-            # if not os.path.exists(app.config['UPLOAD_FOLDER']):
-            #     os.makedirs(app.config['UPLOAD_FOLDER'])            
-
-            # file.save(file_path)
-
-            # base64_image = encode_image(file_path)
-
-            # classification = model.classify(path, file_path)
             
             tmp_messages = list(messages)
             print(path)
@@ -200,7 +214,6 @@ def classify_route():
                     "content": [
                         {
                             "type": "text",
-                            # "text": "Apa yang terjadi pada "+path+" tersebut, tolong simpulkan dengan baik!"
                             "text":"Gambar diatas adalah foto dari"+ path + "seorang pasien Deskripsikan kondisi gigi pasien tersebut, sebutkan kode ICD 10 Diagnosis dari kondisi gigi tersebut Sebutkan juga kemungkinan penyebab, tata cara penatalaksanaan pertolongan pertama di rumah, dan kemungkinan-kemungkinan kode tindakan ICD 9 CM yang dapat dilakukan dokter gigi Sertakan pula langkah-langkah promotif dan preventif agar kondisi pasien lebih baik kedepannya"
                         },
                         {
