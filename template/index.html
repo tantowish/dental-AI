@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="{{ url_for('static', filename='/img/icon.png') }}">
     <title>Carigi AI</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <link href="{{ url_for('static', filename='/asset/dist/output.css') }}" rel="stylesheet">
@@ -10,7 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='/asset/dist/hover.css') }}">
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script> 
     <script src="{{ url_for('static', filename='/asset/javascript/index.js') }}"></script>
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+   
 </head>
 <body>
     <div class="flex flex-wrap h-screen items-center">
