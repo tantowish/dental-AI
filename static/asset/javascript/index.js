@@ -176,12 +176,9 @@ $(document).ready(function(event) {
                     const history = data.history
 
                     $('#daftar').on('click', function() {
-                        var newDomainURL = 'https://' + data.link + '/register?rekmed=' + encodeURIComponent(data.rekmed) +
-                        '&rangkuman=' + encodeURIComponent(history.rangkuman) +
-                        '&rangkumanGambar=' + encodeURIComponent(history.classification) +
-                        '&image=' + history.image;
-                
-                        window.location.href = newDomainURL;
+                        const newDomainURL = `https://${data.link}/register?rekmed=${encodeURIComponent(data.rekmed)}&rangkuman=${encodeURIComponent(history.rangkuman)}&rangkumanGambar=${encodeURIComponent(history.classification)}&image=${history.image}`;
+
+                        window.open(newDomainURL, '_blank');
                     });
                 },
                 error: function(error) {
