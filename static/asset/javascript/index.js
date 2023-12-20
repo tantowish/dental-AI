@@ -176,8 +176,11 @@ $(document).ready(function(event) {
                     const history = data.history
 
                     $('#daftar').on('click', function() {
-                        const newDomainURL = `https://${data.link}/register?rekmed=${encodeURIComponent(data.rekmed)}&rangkuman=${encodeURIComponent(history.rangkuman)}&rangkumanGambar=${encodeURIComponent(history.classification)}&image=${history.image}`;
-
+                        var newDomainURL = 'https://' + data.link + '/register?rekmed=' + encodeURIComponent(data.rekmed) +
+                        '&rangkuman=' + encodeURIComponent(history.rangkuman) +
+                        '&rangkumanGambar=' + encodeURIComponent(history.classification) +
+                        '&image=' + history.image;
+                
                         window.open(newDomainURL, '_blank');
                     });
                 },
