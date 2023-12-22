@@ -153,7 +153,7 @@ $(document).ready(function(event) {
         // toggleChatbox(event)
         event.preventDefault
         
-        if(responseCount>3){
+        if(responseCount>2){
             $('body').append($('#loading-overlay').html());
 
             $.ajax({

@@ -65,6 +65,8 @@ def get_completion(prompt):
     messages.append({"role": "assistant", "content": response})
     session['messages'] = messages
 
+    print(messages)
+
     return response
 
 @app.route("/", methods=['POST', 'GET'])
@@ -85,11 +87,7 @@ def index():
         nama = request.args.get('nama')
         umur = request.args.get('umur')
         kelamin = request.args.get('kelamin')
-        # penjadwalan = request.args.get('penjadwalan')
-        # tanggal = request.args.get('tanggal')
-        # poliklinik = request.args.get('poliklinik')
-        # bayar = request.args.get('bayar')
-        # klinik = request.args.get('klinik')
+
         all_values = {
             'rekmed': session['rekmed'],
             'nama': nama,
@@ -191,7 +189,6 @@ def classify_route():
         print(path)
         if file.filename != '' and allowed_file(file.filename):
             new_filename = uuid.uuid4().hex + '.'+file.filename.rsplit('.', 1)[1].lower()
-
             s3.upload_fileobj(
                 file,
                 os.getenv("AWS_BUCKET_NAME"),
@@ -208,13 +205,23 @@ def classify_route():
             
             tmp_messages = list(messages)
             print(path)
+
+            messages.append({"role": "user", "content": 'Buat resume dari percakapan diatas, kamu harus melakukan resume dari penyakit gigi dan mulut yang diderita user dengan format :\nA. Nama Penyakit\nB. No ICD 10\nC. Definisi\nD. Klasifikasi Terapi ICD 9 CM'})
+            print(messages)
+            query = openai.chat.completions.create(
+                model="gpt-3.5-turbo-1106",
+                messages=messages
+            )
+            response = query.choices[0].message.content
+            
+            print(response)
             tmp_messages.append(
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text":"Gambar diatas adalah foto dari"+ path + "seorang pasien Deskripsikan kondisi gigi pasien tersebut, sebutkan kode ICD 10 Diagnosis dari kondisi gigi tersebut Sebutkan juga kemungkinan penyebab, tata cara penatalaksanaan pertolongan pertama di rumah, dan kemungkinan-kemungkinan kode tindakan ICD 9 CM yang dapat dilakukan dokter gigi Sertakan pula langkah-langkah promotif dan preventif agar kondisi pasien lebih baik kedepannya"
+                            "text":"Gambar diatas adalah foto dari"+ path + "seorang pasien Deskripsikan kondisi gigi pasien tersebut, sebutkan kode ICD 10 Diagnosis dari kondisi gigi tersebut Sebutkan juga kemungkinan penyebab, tata cara penatalaksanaan pertolongan pertama di rumah, dan kemungkinan-kemungkinan kode tindakan ICD 9 CM yang dapat dilakukan dokter gigi Sertakan pula langkah-langkah promotif dan preventif agar kondisi pasien lebih baik kedepannya. Dengan anamnesa sebagai berikut : "+response+" Buat 2 paragraf saja"
                         },
                         {
                             "type": "image_url",
@@ -230,7 +237,7 @@ def classify_route():
                 messages=[
                     tmp_messages
                 ],
-                max_tokens=300,
+                max_tokens=500,
             )
             classification = response.choices[0].message.content
             messages.append({"role": "assistant", "content": classification})
