@@ -181,7 +181,7 @@ $(document).ready(function(event) {
                         '&rangkumanGambar=' + encodeURIComponent(history.classification) +
                         '&image=' + history.image;
                 
-                        window.location.href = newDomainURL;
+                        window.open(newDomainURL, '_blank');
                     });
                 },
                 error: function(error) {
