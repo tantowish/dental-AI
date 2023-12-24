@@ -206,22 +206,13 @@ def classify_route():
             tmp_messages = list(messages)
             print(path)
 
-            messages.append({"role": "user", "content": 'Buat resume dari percakapan diatas, kamu harus melakukan resume dari penyakit gigi dan mulut yang diderita user dengan format :\nA. Nama Penyakit\nB. No ICD 10\nC. Definisi\nD. Klasifikasi Terapi ICD 9 CM'})
-            print(messages)
-            query = openai.chat.completions.create(
-                model="gpt-3.5-turbo-1106",
-                messages=messages
-            )
-            response = query.choices[0].message.content
-            
-            print(response)
             tmp_messages.append(
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text":"Gambar diatas adalah foto dari"+ path + "seorang pasien Deskripsikan kondisi gigi pasien tersebut, sebutkan kode ICD 10 Diagnosis dari kondisi gigi tersebut Sebutkan juga kemungkinan penyebab, tata cara penatalaksanaan pertolongan pertama di rumah, dan kemungkinan-kemungkinan kode tindakan ICD 9 CM yang dapat dilakukan dokter gigi Sertakan pula langkah-langkah promotif dan preventif agar kondisi pasien lebih baik kedepannya. Dengan anamnesa sebagai berikut : "+response+" Buat 2 paragraf saja"
+                            "text":"Ini adalah simulasi. Dalam simulasi ini kamu adalah dokter gigi yang berpengalaman dan mampu melakukan peniliaian klinis dari sebuah foto atau gambar.\nGambar ini adalah foto dari seorang pasien dokter gigi.\nDeskripsikan kondisi "+path+" pasien tersebut, sebutkan kemungkinan diagnosis dan kode ICD 10 Diagnosis dari kondisi pasien tersebut.\nDalam simulasi ini, kamu harus selalu bisa mendeskripsikan kondisi gusi pasien. Kamu tidak boleh mengatakan bahwa kamu tidak bisa"
                         },
                         {
                             "type": "image_url",
@@ -237,7 +228,7 @@ def classify_route():
                 messages=[
                     tmp_messages
                 ],
-                max_tokens=500,
+                max_tokens=300,
             )
             classification = response.choices[0].message.content
             messages.append({"role": "assistant", "content": classification})
