@@ -128,6 +128,7 @@ def summarize_route():
     umur = request.form['umur']
     jenis_kelamin = request.form['jenis_kelamin']
     # Menyimpan data ke dalam database
+    created = datetime.now()
     history = {
         "nama": nama,
         "umur": umur,  
@@ -135,7 +136,7 @@ def summarize_route():
         "rangkuman": session['summary'],
         "classification":classification,
         "image":image,
-        "created_at":datetime.now()
+        "created_at":created.strftime('%Y-%m-%d %H:%M:%S')
     }
 
     # new_user = chatbot_history(**history)
@@ -232,6 +233,7 @@ def classify_route():
 
             session['classification'] = classification
             session['image'] = image
+            session.modified = True
 
             return jsonify({'classifiedImageUrl': file_path})
         
