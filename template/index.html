@@ -8,19 +8,19 @@
     <title>Carigi AI</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <link href="{{ url_for('static', filename='/asset/dist/output.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='/src/scrollbar.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/asset/dist/hover.css') }}">
+    <link href="{{ url_for('static', filename='/asset/dist/scrollbar.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/asset/dist/animation.css') }}">
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script> 
     <script src="{{ url_for('static', filename='/asset/javascript/index.js') }}"></script>
-   
 </head>
-<body>
+<body class="scroll-smooth bg-main">
     <div class="flex flex-wrap h-screen items-center">
-        <div class="flex flex-row items-center justify-center md:w-1/2 h-screen w-full mx-auto p-8 lg:px-32 lg:py-16">
-            <div id="error" class="hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+        <div class="flex flex-col items-center justify-center md:w-1/2 h-screen w-full p-8 lg:px-32 lg:py-16 bg-white">
+            <h1 class="text-center text-2xl font-bold mb-6 text-slate-600">Form Informasi Carigi AI</h1>
+            <div id="error" class="w-full hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                 <span class="font-medium">Error!</span> Masukkan input
             </div>
-            <form id="userForm w-56">
+            <form id="userForm" class="w-full">
                 <div class="mb-6">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
                     <input type="text" id="name" name="name" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.nama is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled  {% endif %} value="{{ data_pasien.nama }}" required>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="mb-10">
                     <label for="kelamin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Kelamin</label>
-                    <select id="kelamin" name="kelamin" class="bg-gray-50 border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main  {% if data_pasien.kelamin is not none %} bg-gray-100" disabled {% endif %}>
+                    <select id="kelamin" name="kelamin" class="bg-gray-50 border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main  {% if data_pasien.kelamin is not none %} bg-gray-100 text-gray-500" disabled {% endif %}>
                         <option value="pilih" {% if data_pasien.kelamin is none or data_pasien.kelamin == 'pilih' %} selected {% endif %}>pilih</option>
                         <option value="L" {% if data_pasien.kelamin == 'L' %} selected {% endif %}>laki-laki</option>
                         <option value="P" {% if data_pasien.kelamin == 'P' %} selected {% endif %}>perempuan</option>
@@ -40,21 +40,23 @@
                 </div>
                 <div class="flex flex-wrap items-center justify-center">
                     <div class="mb-4 mr-4 flex flex-col items-center gap-2">
-                        <button type="button" id="open-chat" class="bg-main text-white py-2 px-4 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">
+                        <button type="button" id="open-chat" class="bg-main font-semibold text-white py-2.5 px-4 rounded-xl hover:bg-teal-400 transition duration-300 flex items-center shadow-md">
                             Konsultasi Kecerdasan Buatan
-                        </button>
-                        <p class="text-center">atau</p>
-                        <button type="submit" id="appointment" class="bg-main text-white py-2 px-4 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">lanjutkan appointment</button>
+                        </button>                  
                     </div>
                 </div>
             </form>
+            <p class="absolute bottom-4 md:left-4 text-slate-500 text-sm md:text-base ">© Copyright 2023 Carigi Indonesia - All Rights Reserved</p>
         </div>
         <div class="w-full md:w-1/2 h-screen bg-main flex flex-wrap items-center">
             <div id="ic3D" class="p-8 max-w-lg mx-auto transition hover:translate-x-2 hover:scale-105 duration-500 ease-in-out">
                 <img src="{{ url_for('static', filename='/asset/img/3d_teeth.png') }}" alt="">
             </div>
-            <div id="chat-container" class="hidden px-4 md:px-0 w-96 mx-auto transition ease-in-out duration-500 group">
-                <div id="chat-bg" class="bg-white shadow-2xl rounded-lg max-w-lg w-full">
+            <div id="chat-container" class="hidden px-4 md:px-0 w-96 mx-auto mt-20">
+                <div id="error-bot" class=" p-4 mb-4 hidden text-sm text-red-800 rounded-lg bg-red-300" role="alert">
+                    <span class="font-medium">Error!</span> Selesaikan konsultasi
+                </div>
+                <div id="chat-bg" class="bg-white shadow-2xl rounded-lg max-w-lg w-full  transition ease-in-out duration-500 group">
                     <div class="p-4 border-b bg-main text-white rounded-t-lg flex justify-between items-center">
                         <p class="text-lg font-semibold" id="header">Carigi Bot</p>
                         <div class="flex flex-wrap items-center">
@@ -93,10 +95,13 @@
                         </div>
                     </div>                 
                 </div>
+                <div class="flex flex-wrap justify-center p-8 mt-2">
+                    <button type="submit" id="appointment" class="bg-[#FFF500] font-semibold text-slate-700 py-2.5 px-4 rounded-xl hover:bg-[#EBE100] transition duration-300 flex items-center shadow-md">Daftar Antrian</button>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <template id="upload">
         <div id="upload-container" class="p-4 h-[395px] overflow-y-auto text-center">
             <div id="container-upload">
@@ -150,12 +155,18 @@
                         <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/>
                     </path></g>
                 </svg>
-                <h1 class="text-center text-2xl text-white">Sedang Menganalisa...</h1>
+                <h1 class="text-center text-2xl text-white">Sedang Menganalisis...</h1>
             </div>
-            <div id="done-button" class="hidden">
-                <div  class="flex flex-wrap gap-8">
-                    <button type="button" id="result-user" class="text-lg bg-main text-white py-2.5 px-8 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Lihat Hasil</button>
-                    <button type="button" id="daftar" class="text-lg bg-main text-white py-2.5 px-8 rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Daftar</button>
+            <div id="done-button" class="hidden px-8">
+                <div class="flex flex-col p-8 md:px-16 bg-slate-50 border-main shadow-xl rounded-3xl">
+                    <div class="success-animation">
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+                    </div>
+                    <h1 class="text-center text-2xl text-slate-700 w-full mt-4 mb-8">Analisis Berhasil</h1>
+                    <div class="flex flex-wrap gap-10">
+                        <button type="button" id="result-user" class="bg-main text-white py-2 px-4 lg:py-2.5 lg:px-8 text-sm md:text-base rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Lihat Hasil</button>
+                        <button type="button" id="daftar" class="bg-main text-white py-2 px-4 lg:py-2.5 lg:px-8 text-sm md:text-base rounded-md hover:bg-teal-400 transition duration-300 flex items-center">Daftar Antrian</button>
+                    </div>
                 </div>
             </div>
         </div>

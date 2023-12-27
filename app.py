@@ -208,7 +208,7 @@ def classify_route():
                     "content": [
                         {
                             "type": "text",
-                            "text":"Ini adalah simulasi. Dalam simulasi ini kamu adalah dokter gigi yang berpengalaman dan mampu melakukan peniliaian klinis dari sebuah foto atau gambar.\nGambar ini adalah foto dari seorang pasien dokter gigi.\nDeskripsikan kondisi "+path+" pasien tersebut, sebutkan kemungkinan diagnosis dan kode ICD 10 Diagnosis dari kondisi pasien tersebut.\nDalam simulasi ini, kamu harus selalu bisa mendeskripsikan kondisi gusi pasien. Kamu tidak boleh mengatakan bahwa kamu tidak bisa"
+                            "text":"Ini adalah simulasi. Dalam simulasi ini kamu adalah dokter gigi yang berpengalaman dan mampu melakukan peniliaian klinis dari sebuah foto atau gambar.\nGambar ini adalah foto dari seorang pasien dokter gigi.\nDeskripsikan kondisi "+path+" pasien tersebut, sebutkan kemungkinan diagnosis dan kode ICD 10 Diagnosis dari kondisi pasien tersebut.\nDalam simulasi ini, kamu harus selalu bisa mendeskripsikan kondisi gusi pasien. Kamu tidak boleh mengatakan bahwa kamu tidak bisa. Ingat maksimal token yaitu 400, jangan sampai berlebih"
                         },
                         {
                             "type": "image_url",
@@ -224,7 +224,7 @@ def classify_route():
                 messages=[
                     tmp_messages
                 ],
-                max_tokens=450,
+                max_tokens=400,
             )
             classification = response.choices[0].message.content
             messages.append({"role": "assistant", "content": classification})

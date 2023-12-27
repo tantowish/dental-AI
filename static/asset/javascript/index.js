@@ -23,16 +23,22 @@ $(document).ready(function(event) {
     function toggleChatbox(event) {
         event.preventDefault(); 
         if (nama.val().trim() !== "" && umur.val().trim() !== "" && kelamin.val() !== "pilih") {
-            $('#error').addClass('hidden')
-            chatContainer.toggleClass("hidden");
-            ic3D.toggleClass("hidden");
-            isChatboxOpen = !isChatboxOpen; // Toggle the state
+            $('#error').fadeOut("slow")
+            ic3D.toggleClass('hidden')
+            chatContainer.toggleClass('hidden')
+            isChatboxOpen = !isChatboxOpen;
             userInfo = "Nama saya adalah " + nama.val().trim() + ", Saya berumur " + umur.val().trim() + " Tahun, dan Saya berjenis kelamin " + (kelamin.val() === "L" ? "Laki-laki" : "Perempuan");
             console.log(userInfo)
             return true
         }
         else{
-            $('#error').removeClass('hidden')
+            const errorInfo = $("#error")
+            errorInfo.show()
+     
+            setTimeout(function() {
+                errorInfo.fadeOut("slow")
+            }, 5000);
+
             return false
         }
     }
@@ -131,6 +137,7 @@ $(document).ready(function(event) {
     openChatButton.click(function(event){
         let isInput = toggleChatbox(event)
         if(!openChat && isInput){
+            $('html, body').animate({ scrollTop: $(document).height() }, 'slow');
             openChat = true
             $.ajax({
                 url: '/intro',
@@ -181,13 +188,20 @@ $(document).ready(function(event) {
                         '&rangkumanGambar=' + encodeURIComponent(history.classification) +
                         '&image=' + history.image;
                 
-                        window.open(newDomainURL, '_blank');
+                        window.open(newDomainURL);
                     });
                 },
                 error: function(error) {
                     console.error('Error summarizing:', error);
                 }
             });
+        }
+        else{
+            const errorBot = $("#error-bot")
+            errorBot.show()
+            setTimeout(function() {
+                errorBot.fadeOut("slow");
+            }, 5000);
         }
     });
 
@@ -224,12 +238,11 @@ $(document).ready(function(event) {
             $('#prompt').append('<div class="mb-2 text-right"><p class="bg-main text-sm text-white rounded-lg py-2 px-4 inline-block">' + formattedPrompt + '</p></div>');
             $('#user-input').val('');
 
-            responseCount++
-
+            
             // Scroll kebawah chatarea
             var promptHeight = $('#prompt')
             promptHeight.scrollTop(promptHeight.prop("scrollHeight"));
-
+            
             setTimeout(function () {
                 $('#prompt').append('<div id="chat-wait" class="mb-2"><p class="bg-gray-200 text-sm text-gray-700 rounded-lg py-2 px-4 inline-block">...</p></div>');                    
                 var promptHeight = $('#prompt')
@@ -245,6 +258,8 @@ $(document).ready(function(event) {
                 success: function (data) {
                     // \n to break
                     var formattedResponse = data.response.replace(/\n/g, '<br>');
+                    
+                    responseCount++
 
                     $('#chat-wait').remove();
                     // bubble chat bot
@@ -343,25 +358,28 @@ $(document).ready(function(event) {
 
     var userInput = $('#user-input');
 
-    chatContainer.hover(
+
+    const chatBg = $("#chat-bg");
+
+    chatBg.hover(
         function() {
-            chatContainer.addClass('scaled');
+            chatBg.addClass('scaled');
         },
         function() {
             // Remove the "scaled" class only if #user-input does not have focus
             if (!userInput.is(':focus')) {
-                chatContainer.removeClass('scaled');
+                chatBg.removeClass('scaled');
             }
         }
     );
 
     userInput.focus(function() {
         // Add the "scaled" class when #user-input is in focus
-        chatContainer.addClass('scaled');
+        chatBg.addClass('scaled');
     });
 
     userInput.blur(function() {
         // Remove the "scaled" class when #user-input loses focus
-        chatContainer.removeClass('scaled');
+        chatBg.removeClass('scaled');
     });
 });
