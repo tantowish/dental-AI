@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, session, flash
 import openai, os, base64, secrets, boto3, uuid
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Enum
+# from flask_sqlalchemy import SQLAlchemy
+# from sqlalchemy import Enum
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -24,24 +24,24 @@ def allowed_file(filename):
 app = Flask(__name__, template_folder='template', static_folder='static') 
 app.debug = True
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('database')
-app.config['UPLOAD_FOLDER'] = 'static/img'
-db = SQLAlchemy(app)
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('database')
+# app.config['UPLOAD_FOLDER'] = 'static/img'
+# db = SQLAlchemy(app)
 
-class chatbot_history(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nama = db.Column(db.String(50), nullable=False)
-    umur = db.Column(db.Integer, nullable=False)
-    jenis_kelamin = db.Column(Enum('P', 'L', name='jenis_kelamin_enum'), nullable=False)
-    rangkuman = db.Column(db.Text, nullable=True)
-    classification = db.Column(db.Text, nullable=True)
-    image = db.Column(db.String(100), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    edited_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+# class chatbot_history(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     nama = db.Column(db.String(50), nullable=False)
+#     umur = db.Column(db.Integer, nullable=False)
+#     jenis_kelamin = db.Column(Enum('P', 'L', name='jenis_kelamin_enum'), nullable=False)
+#     rangkuman = db.Column(db.Text, nullable=True)
+#     classification = db.Column(db.Text, nullable=True)
+#     image = db.Column(db.String(100), nullable=True)
+#     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+#     edited_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-# Buat database dan tabel
-with app.app_context():
-    db.create_all()  
+# # Buat database dan tabel
+# with app.app_context():
+#     db.create_all()  
 
 # OpenAI API Key 
 openai.api_key = os.getenv('api-key')
@@ -93,11 +93,6 @@ def index():
             'nama': nama,
             'umur':umur,
             'kelamin':kelamin
-            # 'penjadwalan': penjadwalan,
-            # 'tanggal': tanggal,
-            # 'poliklinik': poliklinik,
-            # 'bayar': bayar,
-            # 'klinik': klinik,
         }
 
         print(all_values)
@@ -139,7 +134,8 @@ def summarize_route():
         "jenis_kelamin": jenis_kelamin, 
         "rangkuman": session['summary'],
         "classification":classification,
-        "image":image
+        "image":image,
+        "created_at":datetime.now()
     }
 
     # new_user = chatbot_history(**history)
@@ -228,7 +224,7 @@ def classify_route():
                 messages=[
                     tmp_messages
                 ],
-                max_tokens=300,
+                max_tokens=450,
             )
             classification = response.choices[0].message.content
             messages.append({"role": "assistant", "content": classification})

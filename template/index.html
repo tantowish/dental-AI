@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="icon" href="{{ url_for('static', filename='/img/icon.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='/favicon.ico') }}">
     <title>Carigi AI</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <link href="{{ url_for('static', filename='/asset/dist/output.css') }}" rel="stylesheet">
@@ -16,11 +16,11 @@
 </head>
 <body>
     <div class="flex flex-wrap h-screen items-center">
-        <div class="md:w-1/2 w-full mx-auto p-8 lg:px-32 lg:py-16">
+        <div class="flex flex-row items-center justify-center md:w-1/2 h-screen w-full mx-auto p-8 lg:px-32 lg:py-16">
             <div id="error" class="hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                 <span class="font-medium">Error!</span> Masukkan input
             </div>
-            <form id="userForm">
+            <form id="userForm w-56">
                 <div class="mb-6">
                     <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
                     <input type="text" id="name" name="name" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.nama is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled  {% endif %} value="{{ data_pasien.nama }}" required>
@@ -49,7 +49,7 @@
                 </div>
             </form>
         </div>
-        <div class="w-full md:w-1/2 md:h-screen bg-main flex flex-wrap items-center">
+        <div class="w-full md:w-1/2 h-screen bg-main flex flex-wrap items-center">
             <div id="ic3D" class="p-8 max-w-lg mx-auto transition hover:translate-x-2 hover:scale-105 duration-500 ease-in-out">
                 <img src="{{ url_for('static', filename='/asset/img/3d_teeth.png') }}" alt="">
             </div>

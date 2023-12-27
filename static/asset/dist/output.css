@@ -684,6 +684,14 @@ video {
   width: 100%;
 }
 
+.w-44 {
+  width: 11rem;
+}
+
+.w-56 {
+  width: 14rem;
+}
+
 .max-w-6xl {
   max-width: 72rem;
 }
@@ -698,6 +706,10 @@ video {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .flex-col {
@@ -859,29 +871,24 @@ video {
   padding-right: 1rem;
 }
 
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
-}
-
 .px-8 {
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .text-center {
