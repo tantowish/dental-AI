@@ -5,6 +5,9 @@ module.exports = {
     extend: {
       colors:{
         'main':'#28C797',
+      },
+      fontFamily:{
+        'quicksand': ['Quicksand']
       }
     },
   },

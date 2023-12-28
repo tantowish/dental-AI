@@ -12,25 +12,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='/asset/dist/animation.css') }}">
 	<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script> 
     <script src="{{ url_for('static', filename='/asset/javascript/index.js') }}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
-<body class="scroll-smooth bg-main">
+<body class="scroll-smooth bg-main font-quicksand">
     <div class="flex flex-wrap h-screen items-center">
         <div class="flex flex-col items-center justify-center md:w-1/2 h-screen w-full p-8 lg:px-32 lg:py-16 bg-white">
-            <h1 class="text-center text-2xl font-bold mb-6 text-slate-600">Form Informasi Carigi AI</h1>
+            <h1 class="text-center text-2xl font-bold mb-12 text-slate-600">Form Informasi Carigi AI</h1>
             <div id="error" class="w-full hidden p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                 <span class="font-medium">Error!</span> Masukkan input
             </div>
             <form id="userForm" class="w-full">
                 <div class="mb-6">
-                    <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
+                    <label for="name" class="block mb-2 text-base font-semibold text-gray-900 dark:text-white">Nama</label>
                     <input type="text" id="name" name="name" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.nama is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled  {% endif %} value="{{ data_pasien.nama }}" required>
                 </div>
                 <div class="mb-6">
-                    <label for="umur" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Umur</label>
+                    <label for="umur" class="block mb-2 text-base font-semibold text-gray-900 dark:text-white">Umur</label>
                     <input type="number" id="umur" name="umur" class="border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main {% if data_pasien.umur is none %} bg-gray-50 {% else %} bg-gray-100 text-gray-500" disabled {% endif %} value="{{ data_pasien.umur }}" required>
                 </div>
                 <div class="mb-10">
-                    <label for="kelamin" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Kelamin</label>
+                    <label for="kelamin" class="block mb-2 text-base font-semibold text-gray-900 dark:text-white">Jenis Kelamin</label>
                     <select id="kelamin" name="kelamin" class="bg-gray-50 border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main  {% if data_pasien.kelamin is not none %} bg-gray-100 text-gray-500" disabled {% endif %}>
                         <option value="pilih" {% if data_pasien.kelamin is none or data_pasien.kelamin == 'pilih' %} selected {% endif %}>pilih</option>
                         <option value="L" {% if data_pasien.kelamin == 'L' %} selected {% endif %}>laki-laki</option>
