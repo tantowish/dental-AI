@@ -107,8 +107,8 @@ def index():
 @app.route("/summarize", methods=['POST'])
 def summarize_route():
     messages = session.get('messages', [])
-    classification = session.get('classification')
-    image = session.get('image')
+    classification = session['classification']
+    image = session['image']
     if(classification):
         classification = session['classification']
     else:
