@@ -158,7 +158,7 @@ $(document).ready(function(event) {
 
     $('#appointment').click(function(event){
         // toggleChatbox(event)
-        event.preventDefault
+        event.preventDefault()
         
         if(responseCount>2){
             $('body').append($('#loading-overlay').html());
@@ -181,15 +181,22 @@ $(document).ready(function(event) {
                     });
 
                     const history = data.history
-
-                    $('#daftar').on('click', function() {
-                        var newDomainURL = 'https://' + data.link + '/register?rekmed=' + encodeURIComponent(data.rekmed) +
-                        '&rangkuman=' + encodeURIComponent(history.rangkuman) +
-                        '&rangkumanGambar=' + encodeURIComponent(history.classification) +
-                        '&image=' + history.image;
-                
-                        window.open(newDomainURL);
-                    });
+                    if(data.link && data.rekmed){
+                        $('#daftar').on('click', function() {
+                            var newDomainURL = 'https://' + data.link + '/register?rekmed=' + encodeURIComponent(data.rekmed) +
+                            '&rangkuman=' + encodeURIComponent(history.rangkuman) +
+                            '&rangkumanGambar=' + encodeURIComponent(history.classification) +
+                            '&image=' + history.image;
+                    
+                            window.open(newDomainURL);
+                        });
+                    }
+                    else{
+                        $('#daftar').css('background-color', 'gray');
+                        $('#daftar').on('click', function(e){
+                            e.preventDefault()
+                        })
+                    }
                 },
                 error: function(error) {
                     console.error('Error summarizing:', error);

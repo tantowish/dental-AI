@@ -33,6 +33,7 @@
                 <div class="mb-10">
                     <label for="kelamin" class="block mb-2 text-base font-semibold text-gray-900 dark:text-white">Jenis Kelamin</label>
                     <select id="kelamin" name="kelamin" class="bg-gray-50 border border-slate-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 focus:outline-main  {% if data_pasien.kelamin is not none %} bg-gray-100 text-gray-500" disabled {% endif %}>
+                        <!-- <option value="pilih" {% if data_pasien.kelamin is none or data_pasien.kelamin == 'pilih' %} selected {% endif %}>pilih</option> -->
                         <option value="pilih" {% if data_pasien.kelamin is none or data_pasien.kelamin == 'pilih' %} selected {% endif %}>pilih</option>
                         <option value="L" {% if data_pasien.kelamin == 'L' %} selected {% endif %}>laki-laki</option>
                         <option value="P" {% if data_pasien.kelamin == 'P' %} selected {% endif %}>perempuan</option>

@@ -107,12 +107,15 @@ def index():
 @app.route("/summarize", methods=['POST'])
 def summarize_route():
     messages = session.get('messages', [])
-    classification = session['classification']
-    image = session['image']
-    if(classification):
+    if 'image' in session:
+        image = session['image']
+    else:
+        image = None  # or set it to a default value
+
+    if 'classification' in session:
         classification = session['classification']
     else:
-        classification = None
+        classification = None  # or set it to a default value
     messages.append({"role": "user", "content": 'Buat resume dari percakapan diatas, kamu harus melakukan resume dari penyakit gigi dan mulut yang diderita user dengan format :\nA. Nama Penyakit\nB. No ICD 10\nC. Definisi\nD. Klasifikasi Terapi ICD 9 CM'})
     print(messages)
     query = openai.chat.completions.create(
