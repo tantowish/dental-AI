@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, jsonify, session, flash
 import openai, os, base64, secrets, boto3, uuid
-# from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy import Enum
 from dotenv import load_dotenv
 from datetime import datetime
+from io import BytesIO
 
 load_dotenv()
 
@@ -23,6 +22,7 @@ def allowed_file(filename):
   
 app = Flask(__name__, template_folder='template', static_folder='static') 
 app.debug = True
+
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('database')
 # app.config['UPLOAD_FOLDER'] = 'static/img'
@@ -48,9 +48,10 @@ openai.api_key = os.getenv('api-key')
 app.secret_key = secrets.token_hex(16)
 
 # Function to encode the image
-def encode_image(image_path):
-  with open(image_path, "rb") as image_file:
-    return base64.b64encode(image_file.read()).decode('utf-8')
+def encode_image(file):
+    file.seek(0)
+    return base64.b64encode(file.read()).decode('utf-8')
+
 
 def get_completion(prompt):
     messages = session.get('messages', [])
@@ -188,9 +189,18 @@ def classify_route():
         path = request.form.get('clicked', None)
         print(path)
         if file.filename != '' and allowed_file(file.filename):
+            # Read the file content into memory
+            file_content = BytesIO()
+            file.save(file_content)
+            file_content.seek(0)
+
+            # Use the file content for encoding and uploading
+            base64_image = encode_image(file_content)
+
+            file_content.seek(0)
             new_filename = uuid.uuid4().hex + '.'+file.filename.rsplit('.', 1)[1].lower()
             s3.upload_fileobj(
-                file,
+                file_content,
                 os.getenv("AWS_BUCKET_NAME"),
                 new_filename,
                 ExtraArgs={
@@ -217,7 +227,7 @@ def classify_route():
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": file_path
+                                "url": f"data:image/jpeg;base64,{base64_image}"
                             }
                         }
                     ]
